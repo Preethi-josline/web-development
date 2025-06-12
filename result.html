@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic-Tac-Toe | Result</title>
+  <style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    background: #fff;
+    text-align: center;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+</style>
+</head>
+<body>
+  <h1>Game Over</h1>
+  <p id="result"></p>
+  <button onclick="location.href='tictac.html'">Back to Home</button>
+
+  <script>
+    const result = localStorage.getItem('result');
+    document.getElementById('result').textContent = result || 'No result';
+  </script>
+</body>
+</html>

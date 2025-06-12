@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .input-group input, .input-group button {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #taskInput, #taskTime {
+      flex: 2;
+    }
+
+    button {
+      flex: 1;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-left: 5px solid #28a745;
+      display: flex;
+      flex-direction: column;
+    }
+
+    li.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .task-buttons {
+      margin-top: 8px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .task-buttons button {
+      padding: 5px;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .complete { background-color: #007bff; color: white; }
+    .edit { background-color: #ffc107; color: black; }
+    .delete { background-color: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 To-Do List</h1>
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Add a new task">
+      <input type="datetime-local" id="taskTime">
+      <button onclick="addTask()">Add Task</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function renderTasks() {
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+      const li = document.createElement("li");
+      li.className = task.completed ? "completed" : "";
+
+      const taskText = document.createElement("span");
+      taskText.className = "task-text";
+      taskText.textContent = task.text;
+
+      const timeInfo = document.createElement("small");
+      timeInfo.textContent = task.time ? `⏰ ${task.time}` : "";
+
+      const buttonGroup = document.createElement("div");
+      buttonGroup.className = "task-buttons";
+
+      const completeBtn = document.createElement("button");
+      completeBtn.className = "complete";
+      completeBtn.textContent = "Complete";
+      completeBtn.onclick = () => toggleComplete(index);
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "edit";
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => editTask(index);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.onclick = () => deleteTask(index);
+
+      buttonGroup.append(completeBtn, editBtn, deleteBtn);
+      li.append(taskText, timeInfo, buttonGroup);
+      taskList.appendChild(li);
+    });
+  }
+
+  function addTask() {
+    const text = document.getElementById("taskInput").value.trim();
+    const time = document.getElementById("taskTime").value;
+
+    if (text === "") {
+      alert("Please enter a task.");
+      return;
+    }
+
+    tasks.push({ text, time, completed: false });
+    saveTasks();
+    renderTasks();
+
+    document.getElementById("taskInput").value = "";
+    document.getElementById("taskTime").value = "";
+  }
+
+  function toggleComplete(index) {
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+  }
+
+  function editTask(index) {
+    const currentText = tasks[index].text;
+    const newText = prompt("Edit your task:", currentText);
+    if (newText !== null && newText.trim() !== "") {
+      tasks[index].text = newText.trim();
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  function deleteTask(index) {
+    if (confirm("Delete this task?")) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  window.onload = renderTasks;
+</script>
+
+</body>
+</html>
